@@ -133,7 +133,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
             if(UseCurveSave)
             {
                 FAnimationCurveIdentifier TransformCurveId(BoneTreeName, ERawCurveTrackTypes::RCT_Transform);           
-                AnimSequence->GetController().AddCurve(TransformCurveId, AACF_DriveTrack | AACF_Editable);// 这里才加
+                AnimSequence->GetController().AddCurve(TransformCurveId, AACF_DriveTrack | AACF_Editable);
                 if (!(Anim->Header.AnimType == ESEAnimAnimationType::SEANIM_ABSOLUTE ))
                     AnimSequence->GetController().SetTransformCurveKey(TransformCurveId,0,RePoseTransform);
             }
@@ -160,7 +160,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
        
         for (int32 BoneIndex = 0; BoneIndex < Anim->BonesInfos.Num(); BoneIndex++)
         {
-            const BoneInfo& KeyFrameBone = Anim->BonesInfos[BoneIndex];   //
+            const BoneInfo& KeyFrameBone = Anim->BonesInfos[BoneIndex];   
             auto BoneMesh = GetBone(KeyFrameBone.Name);
             if (BoneMesh.Name == "None") { continue; }
             
@@ -186,7 +186,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
             }
             else
             {
-                BonePoseTransform = BonePoses[GetBoneIndex(KeyFrameBone.Name)];  //从refPose里找到该骨骼的默认变换.。。。。。。
+                BonePoseTransform = BonePoses[GetBoneIndex(KeyFrameBone.Name)]; 
             }
             
             
@@ -204,7 +204,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
             FAnimationCurveIdentifier TransformCurveId(FName(KeyFrameBone.Name), ERawCurveTrackTypes::RCT_Transform);  
             if(UseCurveSave)
             {
-                Skeleton->AddCurveMetaData(FName(KeyFrameBone.Name));//骨骼ID//
+                Skeleton->AddCurveMetaData(FName(KeyFrameBone.Name));
                 AnimSequence->GetController().AddCurve(TransformCurveId, AACF_DriveTrack | AACF_Editable);
             }
                
@@ -212,8 +212,8 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
             
 
             
-           //已弃用无法还原完整的refpose!!!!!!!!功能以放在上方。。。
-          // AnimSequence->GetController().SetTransformCurveKey(TransformCurveId,0,BonePoseTransform);  //将第0针设为默认Pose的位置///////这里默认Pose变为曲线姿势有问题。。。。。。//这里有问题不会变量所有的骨骼姿势
+        // Abandoned, unable to restore complete proposal! Function to be placed above...
+          // AnimSequence->GetController().SetTransformCurveKey(TransformCurveId,0,BonePoseTransform); 
             
             // Loop thru actual bone positions   
             if (KeyFrameBone.BonePositions.Num() > 0)
@@ -223,7 +223,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
                 TArray<FRichCurveKey> PositionKeysY;
                 TArray<FRichCurveKey> PositionKeysX;
                 
-                FVector relative_transform= FVector(0,0,0);  //Anim是自己定义用来缓存Seanim的类
+                FVector relative_transform= FVector(0,0,0); 
              
                 if (Anim->Header.AnimType == ESEAnimAnimationType::SEANIM_ABSOLUTE )
                 {
@@ -236,15 +236,15 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
 
                 if(UseCurveSave)
                 {
-                    for (size_t i = 0; i < KeyFrameBone.BonePositions.Num(); i++)   //动画关键帧数
+                    for (size_t i = 0; i < KeyFrameBone.BonePositions.Num(); i++)  
                     {
                         FVector boneFrameVector;
-                        auto BonePosAnimFrame = KeyFrameBone.BonePositions[i];    //获取提取动画的位移
+                        auto BonePosAnimFrame = KeyFrameBone.BonePositions[i];    
                         BonePosAnimFrame.Value[1] *= -1;
                         auto TimeInSeconds = static_cast<float>(BonePosAnimFrame.Frame) / Anim->Header.FrameRate;
                     
-                        // Relative_transform should be 0.0.0 if absolute anim.. its needed for relative/delta/additive  如果绝对动画，Relative_transform应为 0.0.0。相对/增量/添加剂需要它
-                        boneFrameVector.X = BonePosAnimFrame.Value[0] + relative_transform[0];//
+                        // Relative_transform should be 0.0.0 if absolute anim.. its needed for relative/delta/additive  
+                        boneFrameVector.X = BonePosAnimFrame.Value[0] + relative_transform[0];
                         boneFrameVector.Y = BonePosAnimFrame.Value[1] + relative_transform[1];
                         boneFrameVector.Z = BonePosAnimFrame.Value[2] + relative_transform[2];
 
@@ -292,7 +292,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
                         }
                         else
                         {
-                            while (CurrentFrame < BonePosAnimFrame.Frame)//循环到下一关键针的时间   Frame是该位置在轨道上的那一针上   
+                            while (CurrentFrame < BonePosAnimFrame.Frame) 
                             {
                                 WraithAnimFrame<FVector3f> LastBonePosAnimFrame = KeyFrameBone.BonePositions[i - 1];
                                 PositionalKeys.Add(
@@ -363,7 +363,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
                    for (int32 i = 0; i < KeyFrameBone.BoneRotations.Num(); ++i, ++CurrentFrame)
                    {
                        WraithAnimFrame<FQuat4f> BoneRotationKeyFrame = KeyFrameBone.BoneRotations[i];
-                       BoneRotationKeyFrame.Value *=  FQuat4f(Rel_Rotation);//添加旋转
+                       BoneRotationKeyFrame.Value *=  FQuat4f(Rel_Rotation);
                        // Unreal uses other axis type than COD engine
                        FRotator3f LocalRotator = BoneRotationKeyFrame.Value.Rotator();
                        LocalRotator.Yaw *= -1.0f;
@@ -437,7 +437,7 @@ UObject* UC2AnimAssetFactory::FactoryCreateFile(UClass* InClass, UObject* InPare
                     if (PositionalKeys.IsEmpty())
                     {
                         bool IsAb=Anim->Header.AnimType == ESEAnimAnimationType::SEANIM_ABSOLUTE ;
-                        PositionalKeys.Add(IsAb  ?  FVector3f::ZeroVector   :   FVector3f(BonePoseTransform.GetLocation()));//问题出在这里。。。FVector3f::ZeroVector
+                        PositionalKeys.Add(IsAb  ?  FVector3f::ZeroVector   :   FVector3f(BonePoseTransform.GetLocation()));
                     }
                     else
                     {
